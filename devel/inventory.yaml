@@ -1,0 +1,36 @@
+all:
+    children:
+        local:
+            hosts:
+                localhost:
+                    ansible_connection: local
+    
+        lbs:
+            hosts:
+                ocp31-lb:
+                    ansible_host: 10.189.133.17 
+                    ansible_user: centos
+            vars:
+                frontend_ifname: eth0
+                services:
+                  - name: mysql
+                    proto: tcp
+                    port: 3306
+                frontend_addresses: 
+                  - 10.189.133.12
+                  - 10.189.132.17
+                  - 10.189.132.16
+                  - 10.189.132.15
+                  - 10.189.132.14
+                  - 10.189.132.20
+                  - 10.189.132.27
+                  - 10.189.132.13
+                  - 10.189.132.11
+                  - 10.189.132.9
+                backend_addresses:
+                  - 10.189.132.21
+                  - 10.189.132.28
+                  - 10.189.132.24
+                  - 10.189.132.18
+                  - 10.189.132.30 
+   

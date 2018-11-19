@@ -1,0 +1,7 @@
+- hosts:
+  - lbs
+  become: true
+  gather_facts: false
+  roles:
+  - { role: haproxy-lb }
+
