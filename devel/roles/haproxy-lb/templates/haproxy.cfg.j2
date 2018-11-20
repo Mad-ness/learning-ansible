@@ -29,6 +29,8 @@ global
 defaults
     mode                    tcp
     log                     global
+    option                  tcplog
+    option                  dontlognull
     balance                 leastconn
     timeout queue           1m
     timeout connect         10s
@@ -41,14 +43,16 @@ defaults
 {% for service in services %}
 ### **** {{ service.name }} ****
 frontend {{ service.name }}
+    mode                    {{ service.proto }}
+    default_backend         {{ service.name }}
 {% for address in frontend_addresses %}
     bind                    {{ address }}:{{ service.port }}
 {% endfor %}
-    mode                    {{ service.proto }}
-    default_backend         {{ service.name }}
 
 backend {{ service.name }}
     balance                 roundrobin
+    option                  tcp-check
+    tcp-check               connect port {{ service.port }}
 {% for address in backend_addresses %}
     server                  app{{ loop.index }} {{ address }}:{{ service.port }} check
 {% endfor %}

@@ -8,7 +8,7 @@ all:
         lbs:
             hosts:
                 ocp31-lb:
-                    ansible_host: 10.189.133.17 
+                    ansible_host: 10.189.132.29
                     ansible_user: centos
             vars:
                 frontend_ifname: eth0
@@ -16,8 +16,14 @@ all:
                   - name: mysql
                     proto: tcp
                     port: 3306
+                  - name: mariadb
+                    proto: tcp
+                    port: 3307
+                  - name: postgresql
+                    proto: tcp
+                    port: 5432
                 frontend_addresses: 
-                  - 10.189.133.12
+                  - 10.189.132.29
                   - 10.189.132.17
                   - 10.189.132.16
                   - 10.189.132.15

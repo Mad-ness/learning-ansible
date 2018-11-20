@@ -1,12 +1,32 @@
 - name: Gathering network facts
   setup:
     gather_subset: '!all,!any,network'
+  tags:
+  - remove_frontend_ip
+  - add_frontend_ip
 
 
 - name: Assign a frontend IP address
-  shell: "ip addr add {{ item }}/32 dev {{ frontend_ifname }}"
+  shell: "ip addr add {{ item }}/25 dev {{ frontend_ifname }}"
   loop: '{{ frontend_addresses }}'
   when: 'item not in ansible_all_ipv4_addresses '
+  tags:
+  - add_frontend_ip
+
+
+- name: Detach an IP address(es)
+  shell: "ip addr del {{ item }}/25 dev {{ frontend_ifname }} || true"
+  loop: '{{ frontend_addresses }}'
+  when: 'item in ansible_all_ipv4_addresses '
+  tags: 
+  - never
+#  - remove_frontend_ips
+
+
+- name: Disable SELinux
+  selinux:
+    policy: targeted
+    state: disabled
 
 
 - name: Install haproxy.cfg
@@ -16,6 +36,9 @@
     mode: '0644'
   notify:
     - restart_haproxy
+  tags:
+    - add_frontend_ip
+    - remove_frontend_ip
 
 
 - name: Update sysctl
